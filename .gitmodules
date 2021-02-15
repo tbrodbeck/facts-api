@@ -1,0 +1,3 @@
+[submodule "summarization-toolbox"]
+	path = summarization-toolbox
+	url = https://github.com/tbrodbeck/summarization-toolbox
