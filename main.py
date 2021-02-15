@@ -4,9 +4,7 @@ from typing import Optional
 
 app = FastAPI()
 
-print("importing...")
 summarizer = AbstractiveSummarizer("saved_model", "german", status="fine-tuned")
-print("imported")
 
 @app.get("/")
 def read_root():
