@@ -33,4 +33,6 @@ yarn-error.log*
 # vercel
 .vercel
 
-*Secret.yaml
+quay-io-credentials.Secret.yaml
+tkn
+k8s

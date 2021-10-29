@@ -1,0 +1,120 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: webhook-receiver
+spec:
+  serviceAccountName: webhook-receiver
+  triggers:
+    - template:
+        name: webhook-receiver
+      bindings:
+        - ref: webhook-receiver
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: webhook-receiver
+spec:
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: tkn-e2e-assignment-
+      spec:
+        params:
+          - name: app-name
+            value: tkn-e2e-assignment
+          - name: source-repo
+            value: https://github.com/cloud-native-garage-method-cohort/till-e2e-assignment-app.git
+          - name: image-repo
+            value: quay.io/tillus/cnb-tkn-e2e-assignment
+        serviceAccountName: build-bot
+        pipelineRef:
+          name: build-push-express
+        workspaces:
+          - name: pipeline-shared-data
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 1Gi
+          - name: gitops-repository
+            volumeClaimTemplate:
+              spec:
+                resources:
+                  requests:
+                    storage: 1Gi
+                accessModes:
+                  - ReadWriteOnce
+          - name: git-credentials
+            secret:
+              secretName: git-credentials
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: webhook-receiver
+spec:
+  params:
+    - name: source-repo
+      value: $(body.repository.url)
+    - name: sha
+      value: $(body.head_commit.id)
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: webhook-receiver
+rules:
+  - resources:
+      - eventlisteners
+      - triggerbindings
+      - triggertemplates
+    apiGroups:
+      - triggers.tekton.dev
+    verbs:
+      - get
+  - resources:
+      - pipelineruns
+      - pipelineresources
+    apiGroups:
+      - tekton.dev
+    verbs:
+      - create
+  - resources:
+      - configmaps
+    apiGroups:
+      - ""
+    verbs:
+      - list
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: webhook-receiver
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: webhook-receiver
+roleRef:
+  name: webhook-receiver
+  kind: Role
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+  - name: webhook-receiver
+    kind: ServiceAccount
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: webhook-receiver
+spec:
+  port:
+    targetPort: 8080
+  to:
+    name: el-webhook-receiver
+    kind: Service
+    weight: 100
