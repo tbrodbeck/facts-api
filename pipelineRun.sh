@@ -1,0 +1,1 @@
+curl -X POST -d '{"head_commit": {"id": "HEAD"}, "repository": {"url": "https://github.com/cloud-native-garage-method-cohort/group-3-project-frontend", "name": "funfact-app"}}' -H "Content-Type: application/json" http://webhook-receiver-till-facts-api.itzroks-100000kr1k-fz0n6p-6ccd7f378ae819553d37d5f2ee142bd6-0000.ams03.containers.appdomain.cloud/

@@ -36,3 +36,4 @@ yarn-error.log*
 quay-io-credentials.Secret.yaml
 tkn
 k8s
+__pycache__

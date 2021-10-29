@@ -34,3 +34,4 @@ yarn-error.log*
 .vercel
 
 *Secret.yaml
+__pycache__

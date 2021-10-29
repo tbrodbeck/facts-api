@@ -24,5 +24,5 @@ jokes = [
 
 @app.get("/")
 def read_root():
-    print(random.choice(jokes))
-    return random.choice(jokes)
+    joke = random.choice(jokes)
+    return {"joke": joke}
