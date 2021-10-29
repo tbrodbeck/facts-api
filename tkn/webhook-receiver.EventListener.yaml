@@ -25,9 +25,9 @@ spec:
           - name: app-name
             value: tkn-e2e-assignment
           - name: source-repo
-            value: https://github.com/cloud-native-garage-method-cohort/till-e2e-assignment-app.git
+            value: https://github.com/tbrodbeck/facts-api.git
           - name: image-repo
-            value: quay.io/tillus/cnb-tkn-e2e-assignment
+            value: quay.io/tillus/facts-api
         serviceAccountName: build-bot
         pipelineRef:
           name: build-push-express
